@@ -1,227 +1,194 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>66-Day Tracker — Final</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>66-Day Habit Tracker</title>
   <style>
-    :root {
-      --accent: #0b84ff;
-      --bg: #000000;
-      --card: #0e0e10;
-      --text: #f5f5f5;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:var(--text)}
-    body{display:flex;align-items:center;justify-content:center;background:var(--bg);padding:18px}
-    .app{width:100%;max-width:760px;background:var(--card);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);padding:20px}
-    header{text-align:center;margin-bottom:12px}
-    header img{max-width:140px;height:auto;margin:6px auto 8px;display:block}
-    header h1{margin:0;font-size:22px;color:var(--text)}
-    .goal-input{margin-top:12px}
-    .goal-input input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #222;background:#060606;color:var(--text);font-size:18px}
-    .goal-display{margin-top:10px;font-size:18px;font-weight:700;color:var(--accent);min-height:24px}
-    .status{font-weight:700;font-size:24px;margin:12px 0;text-align:center}
-    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
-    .cell{height:52px;border-radius:10px;border:1px solid #1f1f1f;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--text);background:#0b0b0b;user-select:none}
-    .cell.done{background:linear-gradient(90deg,var(--accent),#2dd4bf);color:#04101a;border:none}
-    .actions{display:flex;gap:10px;margin-top:14px}
-    button{padding:12px 16px;border-radius:10px;border:none;font-weight:800;cursor:pointer;letter-spacing:0.4px}
-    .tick{background:var(--accent);color:#02111a;flex:1}
-    .reset{background:#0b0b0b;color:var(--text);border:1px solid #222}
-    .tip{font-size:13px;color:#9aa6b2;margin-top:8px;text-align:center}
-    #quote{margin-top:16px;background:#071218;padding:14px;border-radius:10px;border:1px solid #10202a;color:#bfeef5;min-height:56px}
-    footer{margin-top:12px;font-size:12px;color:#7b8a94;text-align:center}
-    @media (max-width:520px){.grid{grid-template-columns:repeat(3,1fr)}.cell{height:46px}}
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      max-width: 140px;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+    .goal-input input {
+      font-size: 1.2rem;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      text-align: center;
+      width: 280px;
+    }
+    .goal-display {
+      margin-top: 10px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #0f0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .day {
+      background-color: #111;
+      border: 1px solid #444;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.3s;
+      user-select: none;
+    }
+    .day.ticked {
+      background-color: #0f0;
+      color: #000;
+      font-weight: bold;
+    }
+    .message {
+      margin-top: 15px;
+      color: #f00;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .controls {
+      margin-top: 15px;
+    }
+    .reset {
+      margin: 5px;
+      padding: 8px 14px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: #444;
+      color: #fff;
+    }
+    .reset:hover {
+      background: #666;
+    }
   </style>
 </head>
 <body>
-  <div class="app" role="application" aria-label="66 day tracker app">
-    <header>
-      <!-- Put V.png in same folder as this HTML file -->
-      <img src="V.png" alt="Logo" id="logo" />
-      <h1>66-Day Tracker</h1>
-      <div class="goal-input">
-        <input id="goalInput" type="text" placeholder="Enter your goal here..." aria-label="goal input" />
-      </div>
-      <div id="goalDisplay" class="goal-display" aria-live="polite"></div>
-    </header>
-
-    <div class="status" id="status">Day 0 of 66</div>
-
-    <div class="actions">
-      <button id="tickBtn" class="tick">Tick Today ✅</button>
-      <button id="resetBtn" class="reset">Reset</button>
+  <header>
+    <img src="V.png" alt="Logo" />
+    <h1>66-Day Tracker</h1>
+    <div class="goal-input">
+      <input id="goalInput" type="text" placeholder="Enter your goal here..." />
     </div>
+    <div id="goalDisplay" class="goal-display"></div>
+    <div class="controls">
+      <button id="exportBtn" class="reset">Export</button>
+      <button id="importBtn" class="reset">Import</button>
+    </div>
+  </header>
 
-    <div class="tip">Tip: Press <strong>Tick Today</strong> once per day. If you skip a day, progress resets to Day 1.</div>
-
-    <div class="grid" id="grid" aria-live="polite" aria-label="66 day progress grid"></div>
-
-    <div id="quote" aria-live="polite"></div>
-
-    <footer>
-      <div id="message" aria-live="polite"></div>
-    </footer>
-  </div>
+  <div class="grid" id="grid"></div>
+  <div class="message" id="message"></div>
 
   <script>
-    // Date helpers (YYYY-MM-DD)
-    function ymd(d){const y=d.getFullYear();const m=('0'+(d.getMonth()+1)).slice(-2);const day=('0'+d.getDate()).slice(-2);return y+'-'+m+'-'+day;}
-    function todayStr(){return ymd(new Date());}
-    function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return ymd(d);}
+    const grid = document.getElementById("grid");
+    const message = document.getElementById("message");
+    const goalInput = document.getElementById("goalInput");
+    const goalDisplay = document.getElementById("goalDisplay");
+    const exportBtn = document.getElementById("exportBtn");
+    const importBtn = document.getElementById("importBtn");
 
-    const MAX = 66;
-    const STORAGE_KEY = 'sixtySixTracker_v3';
+    let days = 66;
+    let currentDay = 0;
+    let lastTickDate = null;
 
-    // load/save state from localStorage
-    function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw) return {day:0,last:null,goal:'',quote:'',quoteDate:null};return JSON.parse(raw);}catch(e){return {day:0,last:null,goal:'',quote:'',quoteDate:null};}}
-    function save(state){localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
-
-    let state = load();
-
-    // DOM elements
-    const statusEl = document.getElementById('status');
-    const gridEl = document.getElementById('grid');
-    const tickBtn = document.getElementById('tickBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const quoteEl = document.getElementById('quote');
-    const messageEl = document.getElementById('message');
-    const goalInput = document.getElementById('goalInput');
-    const goalDisplay = document.getElementById('goalDisplay');
-
-    // Seeded random (mulberry32)
-    function mulberry32(a){return function(){let t = a += 0x6D2B79F5; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296;};}
-
-    // Quote parts (non-cringe, short)
-    const q_parts1 = [
-      'Discipline builds', 'Courage fuels', 'Focus sharpens', 'Effort compounds', 'Hunger creates',
-      'Small wins stack', 'Silence refines', 'Pain shapes', 'Consistency carves', 'Restraint grows'
-    ];
-    const q_parts2 = [
-      'strength', 'character', 'clarity', 'resilience', 'skill', 'momentum', 'mastery', 'resolve', 'will', 'edge'
-    ];
-    const q_tails = [
-      '— keep moving', '— stay the course', '— do the work', '— earn it', '— no excuses',
-      '— show up again', '— choose action', '— make it count', '— build quietly', '— outwork yesterday'
-    ];
-
-    function generateQuoteForDate(seedValue){
-      const rnd = mulberry32(seedValue);
-      const a = q_parts1[Math.floor(rnd()*q_parts1.length)];
-      const b = q_parts2[Math.floor(rnd()*q_parts2.length)];
-      const c = q_tails[Math.floor(rnd()*q_tails.length)];
-      return `${a} ${b} ${c}.`;
+    function renderGrid() {
+      grid.innerHTML = "";
+      for (let i = 1; i <= days; i++) {
+        const day = document.createElement("div");
+        day.classList.add("day");
+        day.textContent = i;
+        if (i <= currentDay) {
+          day.classList.add("ticked");
+        }
+        day.addEventListener("click", () => tickDay(i));
+        grid.appendChild(day);
+      }
     }
 
-    // render UI
-    function render(){
-      statusEl.textContent = `Day ${state.day} of ${MAX}`;
-      goalDisplay.textContent = state.goal ? `Goal: ${state.goal}` : '';
-      gridEl.innerHTML = '';
-      for(let i=1;i<=MAX;i++){
-        const cell = document.createElement('div');
-        cell.className = 'cell' + (i<=state.day ? ' done' : '');
-        cell.textContent = i;
-        gridEl.appendChild(cell);
+    function tickDay(dayNumber) {
+      const today = new Date().toDateString();
+      if (lastTickDate === today) {
+        message.textContent = "Already ticked today. Come back tomorrow";
+        return;
       }
-
-      // quote
-      if(state.quote && state.quoteDate === todayStr()){
-        quoteEl.textContent = state.quote;
+      if (dayNumber === currentDay + 1) {
+        currentDay++;
+        lastTickDate = today;
+        message.textContent = "";
       } else {
-        quoteEl.textContent = '';
+        message.textContent = "Wrong day! Resetting...";
+        currentDay = 0;
+        lastTickDate = null;
       }
-
-      // message
-      if(state.day>=MAX){
-        messageEl.innerHTML = '<strong>Congrats — you finished 66 days!</strong>';
-      } else if(state.day===0){
-        messageEl.textContent = 'Not started yet. Press Tick Today to begin.';
-      } else {
-        messageEl.textContent = 'Keep going — press Tick Today each day.';
-      }
+      renderGrid();
     }
 
-    // ensure a quote exists for today (deterministic)
-    function ensureQuoteForToday(){
-      const today = todayStr();
-      if(state.quote && state.quoteDate === today) return;
-      // seed uses YYYYMMDD number + (state.day * large prime) for variety
-      const seed = parseInt(today.replace(/-/g,''),10) + (state.day || 0) * 997;
-      state.quote = generateQuoteForDate(seed);
-      state.quoteDate = today;
-      save(state);
-    }
-
-    function resetProgress(){
-      state = {day:0,last:null,goal:state.goal || '',quote:'',quoteDate:null};
-      save(state);
-      render();
-    }
-
-    function tickToday(){
-      const today = todayStr();
-      if(state.last === today){
-        alert('Already ticked today. Come back tomorrow.');
-        return;
+    goalInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        goalDisplay.textContent = "🎯 " + goalInput.value;
+        goalInput.value = "";
       }
+    });
 
-      if(!state.last || state.day===0){
-        state.day = 1;
-        state.last = today;
-        ensureQuoteForToday();
-        save(state);
-        render();
-        return;
-      }
+    exportBtn.addEventListener("click", () => {
+      const data = { currentDay, lastTickDate, goal: goalDisplay.textContent };
+      const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "progress.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
 
-      if(state.last === yesterdayStr()){
-        state.day = Math.min(MAX, state.day + 1);
-        state.last = today;
-        ensureQuoteForToday();
-        save(state);
-        render();
-        return;
-      }
+    importBtn.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const data = JSON.parse(event.target.result);
+          currentDay = data.currentDay;
+          lastTickDate = data.lastTickDate;
+          goalDisplay.textContent = data.goal;
+          renderGrid();
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    });
 
-      // missed day(s)
-      const lastDate = new Date(state.last);
-      const gap = (new Date(today) - lastDate) / (1000*60*60*24);
-      if(gap > 1){
-        if(!confirm('You missed at least one day. Your progress will reset to Day 1. Continue?')) return;
-        state.day = 1;
-        state.last = today;
-        ensureQuoteForToday();
-        save(state);
-        render();
-        return;
-      }
-
-      // fallback
-      state.day = 1;
-      state.last = today;
-      ensureQuoteForToday();
-      save(state);
-      render();
-    }
-
-    // On load: if last tick older than yesterday, reset to 0 (keeps goal)
-    (function dayCheckOnLoad(){
-      if(!state.last){ render(); return; }
-      const today = todayStr();
-      if(state.last === today || state.last === yesterdayStr()){ render(); return; }
-      state = {day:0,last:null,goal:state.goal || '',quote:'',quoteDate:null};
-      save(state);
-      render();
-    })();
-
-    // events
-    tickBtn.addEventListener('click', tickToday);
-    resetBtn.addEventListener('click', ()=>{ if(confirm('Reset progress to 0?')) resetProgress(); });
-    goalInput.addEventListener('input', ()=>{ state.goal = goalInput.value; save(state); render(); });
-
-    // initial render
-    render();
+    renderGrid();
   </script>
 </body>
 </html>
