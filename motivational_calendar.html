@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Motivation Calendar</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; }
+    h1 { margin: 20px 0; }
+    #logo { width: 80px; margin: 10px auto; }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 600px; margin: auto; }
+    .day { padding: 20px; background: #fff; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .day.completed { background: #4CAF50; color: #fff; }
+    #quoteBox { margin: 20px auto; padding: 15px; max-width: 500px; background: #fff; border-left: 5px solid #4CAF50; border-radius: 8px; font-style: italic; display: none; }
+    button { margin: 15px; padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png" alt="Logo">
+  <h1>Motivation Calendar</h1>
+  <div class="calendar" id="calendar"></div>
+  <div id="quoteBox"></div>
+  <button onclick="shareProgress()">Share Progress</button>
+
+  <script>
+    const calendar = document.getElementById('calendar');
+    const quoteBox = document.getElementById('quoteBox');
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const progress = JSON.parse(localStorage.getItem('progress')) || {};
+
+    function generateQuote(seed) {
+      const parts1 = ["Discipline builds", "Courage fuels", "Focus sharpens", "Pain creates", "Effort unlocks", "Struggle forges"];
+      const parts2 = ["strength", "character", "victory", "greatness", "resilience", "clarity"];
+      const parts3 = ["— keep moving", "— never stop", "— rise above", "— stay the course", "— earn your tomorrow", "— trust the grind"];
+      
+      function seededRandom(seed) {
+        let x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      }
+
+      let i1 = Math.floor(seededRandom(seed) * parts1.length);
+      let i2 = Math.floor(seededRandom(seed + 1) * parts2.length);
+      let i3 = Math.floor(seededRandom(seed + 2) * parts3.length);
+
+      return `${parts1[i1]} ${parts2[i2]} ${parts3[i3]}`;
+    }
+
+    function renderCalendar() {
+      calendar.innerHTML = '';
+      for (let day = 1; day <= daysInMonth; day++) {
+        const div = document.createElement('div');
+        div.classList.add('day');
+        if (progress[day]) div.classList.add('completed');
+        div.textContent = day;
+        div.onclick = () => toggleDay(day);
+        calendar.appendChild(div);
+      }
+    }
+
+    function toggleDay(day) {
+      progress[day] = !progress[day];
+      localStorage.setItem('progress', JSON.stringify(progress));
+      renderCalendar();
+
+      const seed = year * 10000 + (month+1) * 100 + day;
+      const quote = generateQuote(seed);
+      quoteBox.textContent = quote;
+      quoteBox.style.display = 'block';
+    }
+
+    function shareProgress() {
+      const completed = Object.values(progress).filter(Boolean).length;
+      const text = `I've completed ${completed}/${daysInMonth} days on my Motivation Calendar!`;
+      if (navigator.share) {
+        navigator.share({ text });
+      } else {
+        prompt("Copy this link to share:", window.location.href);
+      }
+    }
+
+    renderCalendar();
+  </script>
+</body>
+</html>
